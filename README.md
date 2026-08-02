@@ -7,7 +7,7 @@
 <h3 align="center">Gluance</h3>
 
   <p align="center">
-    View and monitor glucose readings from the Dexcom Share API on your Mac.
+    View and monitor glucose readings on your Mac.
     <br />
     Credentials stay Keychain-encrypted.
     <br />
@@ -18,7 +18,7 @@
   </p>
 </div>
 
-[Demo](https://gluance.vercel.app/)
+[Demo](https://www.gluance.com)
 
 Gluance is an independent, unofficial application and is not affiliated with or endorsed by Dexcom, Inc.
 
@@ -150,7 +150,7 @@ This builds `gluance-backend`, packages `Gluance.app`, and creates the platform 
 
 - Repository: https://github.com/MatthewBlam/Gluance
 - v1.0.0: https://github.com/MatthewBlam/Gluance/releases/tag/v1.0.0
-- Demo: https://gluance.vercel.app/
+- Demo: https://www.gluance.com
 
 ## License
 
