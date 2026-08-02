@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from "electron";
 import { IpcChannels, PushChannels } from "./shared/ipc-channels";
 import type { Reading, Settings, Credentials, ConnectionStatus } from "./shared/types";
-import type { DexcomApi } from "./shared/preload.d";
+import type { GluanceApi } from "./shared/preload.d";
 
 function onPush<T extends unknown[]>(channel: string, callback: (...args: T) => void): () => void {
     const handler = (_event: Electron.IpcRendererEvent, ...args: T) => callback(...args);
@@ -9,7 +9,7 @@ function onPush<T extends unknown[]>(channel: string, callback: (...args: T) => 
     return () => { ipcRenderer.removeListener(channel, handler); };
 }
 
-const api: DexcomApi = {
+const api: GluanceApi = {
     // Request-response (invoke)
     getSettings: () => ipcRenderer.invoke(IpcChannels.SETTINGS_GET),
     saveSettings: (settings: Settings) => ipcRenderer.invoke(IpcChannels.SETTINGS_SAVE, settings),

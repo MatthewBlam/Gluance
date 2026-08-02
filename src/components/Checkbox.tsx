@@ -44,10 +44,12 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
                         onChange={change}
                         disabled={disabled}
                         className={twMerge(
-                            "bg-dex-fg-light border-dex-fg-dark group-hover:border-dex-text-muted group-hover:border-opacity-70",
-                            "checkbox peer appearance-none cursor-pointer w-4 h-4 border-2 outline-none focus-visible:border-dex-green focus-visible:group-hover:border-dex-green rounded ring-0 checked:bg-dex-green checked:group-hover:border-dex-green checked:border-dex-green checked:disabled:group-hover:border-dex-green disabled:group-hover:border-dex-fg-dark disabled:cursor-not-allowed"
+                            "bg-app-background-light border-app-border group-hover:border-app-text-muted group-hover:border-opacity-70",
+                            "checkbox peer appearance-none cursor-pointer w-4 h-4 border-2 outline-none focus-visible:border-brand focus-visible:group-hover:border-brand rounded ring-0 checked:bg-brand checked:group-hover:border-brand checked:border-brand checked:disabled:group-hover:border-brand disabled:group-hover:border-app-border disabled:cursor-not-allowed"
                         )}></input>
-                    <span className="absolute cursor-pointer pointer-events-none text-dex-bg opacity-0 peer-checked:opacity-100 peer-disabled:cursor-not-allowed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <span
+                        data-testid="checkbox-checkmark"
+                        className="absolute cursor-pointer pointer-events-none text-on-brand opacity-0 peer-checked:opacity-100 peer-disabled:cursor-not-allowed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-[11px] w-[11px] cursor-pointer pointer-events-none"
@@ -65,7 +67,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
                 </label>
                 <label
                     htmlFor="checkbox"
-                    className="checklabel font-medium cursor-pointer text-xs ml-[7px] mt-[1px] text-dex-text-muted select-none">
+                    className="checklabel font-medium cursor-pointer text-xs ml-[7px] mt-[1px] text-app-text-muted select-none">
                     {label}
                 </label>
             </div>

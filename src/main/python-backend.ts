@@ -177,13 +177,13 @@ export class PythonBackend {
     if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
       return {
         exe: "python3",
-        args: ["-m", "dexcom_server"],
+        args: ["-m", "gluance_server"],
         cwd: path.resolve(__dirname, "..", "..", "python"),
       };
     }
 
     const ext = process.platform === "win32" ? ".exe" : "";
-    const exe = path.join(process.resourcesPath, `dexcom${ext}`);
+    const exe = path.join(process.resourcesPath, `gluance-backend${ext}`);
     return { exe, args: [] };
   }
 

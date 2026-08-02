@@ -7,13 +7,19 @@ import { MakerDMG } from "@electron-forge/maker-dmg";
 import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
+import path from "path";
+import {
+    APP_NAME,
+    BUNDLE_ID,
+} from "./src/shared/branding";
 
 const config: ForgeConfig = {
     packagerConfig: {
-        name: "Dexcom",
+        name: APP_NAME,
+        appBundleId: BUNDLE_ID,
         icon: "src/graphics/app-icon",
-        extraResource: ["src/dexcom"],
+        extraResource: ["src/gluance-backend"],
         asar: true,
         extendInfo: {
             LSApplicationCategoryType: "public.app-category.healthcare-fitness",
@@ -30,8 +36,8 @@ const config: ForgeConfig = {
     hooks: {
         postPackage: async (_config, options) => {
             if (process.platform === "darwin" && !process.env.APPLE_ID) {
-                const appPath = `${options.outputPaths[0]}/Dexcom.app`;
-                execSync(`codesign --force --deep -s - "${appPath}"`);
+                const appPath = path.join(options.outputPaths[0], `${APP_NAME}.app`);
+                execFileSync("codesign", ["--force", "--deep", "-s", "-", appPath]);
             }
         },
     },

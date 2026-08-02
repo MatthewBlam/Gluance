@@ -21,7 +21,7 @@ export const LoginButton = forwardRef<HTMLButtonElement, LoginButtonProps>(
                 disabled={disabled}
                 onClick={click}
                 className={twMerge(
-                    "ring-offset-dex-fg cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-dex-green select-none appearance-none font-medium text-base text-dex-bg bg-dex-green outline-none ring-2 ring-transparent ring-offset-2 focus-visible:ring-2 focus-visible:ring-dex-green hover:bg-dex-green-hover p-2 rounded-full",
+                    "ring-offset-app-background cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-brand select-none appearance-none font-medium text-base text-on-brand bg-brand outline-none ring-2 ring-transparent ring-offset-2 focus-visible:ring-2 focus-visible:ring-brand hover:bg-brand-hover p-2 rounded-full",
                     className
                 )}
                 {...props}>

@@ -50,11 +50,11 @@ export function Slider({ min, max, step, value, onChange, formatLabel, width = "
         onPointerUp={handleRelease}
         style={{
           width,
-          background: `linear-gradient(to right, var(--color-dex-green) ${percent}%, var(--color-dex-fg) ${percent}%)`,
+          background: `linear-gradient(to right, var(--color-brand) ${percent}%, var(--color-app-background) ${percent}%)`,
         }}
-        className="h-1.5 appearance-none rounded-full cursor-pointer accent-dex-green focus-visible:outline-dex-green outline-transparent outline-2 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-dex-bg [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-dex-green [&::-webkit-slider-thumb]:drop-shadow-ms"
+        className="h-1.5 appearance-none rounded-full cursor-pointer accent-brand focus-visible:outline-brand outline-transparent outline-2 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-control-thumb [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-brand"
       />
-      {formatLabel && <span className="text-sm text-dex-text-muted select-none w-8">{formatLabel(snap(display))}</span>}
+      {formatLabel && <span className="text-sm text-app-text-muted select-none w-8">{formatLabel(snap(display))}</span>}
     </div>
   );
 }

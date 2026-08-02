@@ -23,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 ref={ref}
                 onClick={click}
                 className={twMerge(
-                    "cursor-pointer select-none appearance-none inline-flex items-center font-medium text-sm text-dex-text bg-dex-fg-light hover:bg-dex-fg focus-visible:outline-dex-green outline-transparent outline outline-2 py-2.5 pr-4 rounded-lg",
+                    "cursor-pointer select-none appearance-none inline-flex items-center font-medium text-sm text-app-text bg-app-background-light hover:bg-app-background focus-visible:outline-brand outline-transparent outline outline-2 py-2.5 pr-4 rounded-lg",
                     isIcon ? "pl-[14px]" : "pl-4",
                     className
                 )}

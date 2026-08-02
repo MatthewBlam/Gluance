@@ -9,7 +9,14 @@ import { buildAppMenu } from "./main/menu";
 import { registerIpcHandlers } from "./main/ipc-handlers";
 import { initLogger, createLogger } from "./main/logger";
 import { wasLaunchedAtLogin } from "./main/launch-agent";
+import { applyNativeTheme } from "./main/theme";
+import {
+  APP_NAME,
+  APP_VERSION,
+  DISCLAIMER,
+} from "./shared/branding";
 
+app.setName(APP_NAME);
 initLogger();
 const log = createLogger("system");
 const dataLog = createLogger("data");
@@ -219,6 +226,7 @@ powerMonitor.on("unlock-screen", () => handleResume());
 // --- App lifecycle ---
 
 app.on("ready", () => {
+  applyNativeTheme(storage.getSettings().theme);
   installProductionCSP();
   buildAppMenu();
   const wasOpenedAsHidden = wasLaunchedAtLogin();
@@ -262,10 +270,10 @@ app.on("activate", () => {
 });
 
 app.setAboutPanelOptions({
-  applicationName: "Dexcom (unofficial)",
-  applicationVersion: "1.0.0",
-  version: "1.0.0",
-  credits: "Matthew Blam",
+  applicationName: APP_NAME,
+  applicationVersion: APP_VERSION,
+  version: APP_VERSION,
+  credits: `Matthew Blam\n\n${DISCLAIMER}`,
 });
 
 app.whenReady().then(() => trayManager.init());

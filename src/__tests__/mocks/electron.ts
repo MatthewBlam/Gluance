@@ -32,11 +32,17 @@ export const ipcMain = {
   on: vi.fn(),
 };
 
+export const nativeTheme = {
+  themeSource: "system" as "system" | "light" | "dark",
+  shouldUseDarkColors: false,
+};
+
 export const BrowserWindow = vi.fn();
 
 export default {
   app,
   safeStorage,
   ipcMain,
+  nativeTheme,
   BrowserWindow,
 };

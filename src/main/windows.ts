@@ -1,6 +1,7 @@
 import { BrowserWindow, screen, session } from "electron";
 import path from "path";
 import { WindowBounds } from "../shared/types";
+import { APP_NAME } from "../shared/branding";
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
 declare const MAIN_WINDOW_VITE_NAME: string;
@@ -35,7 +36,7 @@ export function createMainWindow(bounds: WindowBounds, startHidden = false): Bro
     show: false,
     autoHideMenuBar: true,
     center: true,
-    title: "Dexcom",
+    title: APP_NAME,
     frame: false,
     titleBarStyle: "hiddenInset",
     trafficLightPosition: { x: 12, y: 12 },
@@ -69,7 +70,7 @@ export function createWidgetWindow(): BrowserWindow {
     movable: false,
     autoHideMenuBar: true,
     frame: false,
-    title: "Dexcom Widget",
+    title: `${APP_NAME} Widget`,
     alwaysOnTop: true,
     transparent: true,
     hasShadow: false,

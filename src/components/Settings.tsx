@@ -5,7 +5,10 @@ import { Button } from "./Button";
 import { Slider } from "./Slider";
 import { Toggle } from "./Toggle";
 import { RotateCcw, ChevronLeft, ChevronRight, Info } from "lucide-react";
-import { Settings as SettingsType } from "../shared/types";
+import {
+  Settings as SettingsType,
+  type ResolvedThemeMode,
+} from "../shared/types";
 
 export interface SettingsProps extends HTMLMotionProps<"div"> {
   active: boolean;
@@ -20,6 +23,7 @@ export interface SettingsProps extends HTMLMotionProps<"div"> {
   onOpenConfirm: () => void;
   onCloseConfirm: (logout?: boolean) => void;
   onLogout: () => void;
+  resolvedTheme: ResolvedThemeMode;
 }
 
 const variants = {
@@ -44,11 +48,12 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
       onOpenConfirm,
       onCloseConfirm,
       onLogout,
+      resolvedTheme,
       ...props
     },
     ref,
   ) => {
-    const sensorElement = useRef(null);
+    const themeElement = useRef(null);
     const unitElement = useRef(null);
     const highElement = useRef(null);
     const lowElement = useRef(null);
@@ -64,7 +69,7 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
           transition={{ duration: 0.2 }}
           ref={ref}
           className={twMerge(
-            "bg-dex-bg z-20 drop-shadow-2xl rounded-xl size-fit min-w-[430px] absolute left-1/2 top-1/2 [@media(max-height:430px)]:top-[53.5%] transition-top duration-1000",
+            "bg-app-surface z-20 drop-shadow-2xl rounded-xl size-fit min-w-[430px] absolute left-1/2 top-1/2 [@media(max-height:430px)]:top-[53.5%] transition-top duration-1000",
             !active && "pointer-events-none",
             className,
           )}
@@ -72,13 +77,13 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
           <div className="w-full h-full p-6">
             <div className="w-full h-full flex flex-col gap-1.5 justify-start items-center">
               <div className="w-full flex flex-row content-start">
-                <span className="text-dex-text text-xl select-none font-semibold ml-0.5">Settings</span>
+                <span className="text-app-text text-xl select-none font-semibold ml-0.5">Settings</span>
                 <button
                   tabIndex={settingsTabbable ? 12 : -1}
                   onClick={onReset}
-                  className="group relative cursor-pointer appearance-none focus-visible:outline-dex-green ml-auto text-dex-text-muted hover:text-dex-text transition-all duration-[0.03s]">
+                  className="group relative cursor-pointer appearance-none focus-visible:outline-brand ml-auto text-app-text-muted hover:text-app-text transition-all duration-[0.03s]">
                   <RotateCcw className="size-4" strokeWidth={2.35} />
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 px-2 py-1 text-[10px] font-medium text-dex-bg bg-dex-text rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 px-2 py-1 text-[10px] font-medium text-app-surface bg-app-text rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
                     reset to default settings
                   </div>
                 </button>
@@ -87,7 +92,7 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
               <div className="w-full h-full pb-4 pt-2.5 px-0.5 flex flex-row gap-8 mb-6">
                 <div className="w-full flex flex-col content-start gap-8">
                   <div className="low">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Low</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Low</div>
                     {draft.unit === "mg/dl" ? (
                       <ValueBox valueBoxHandler={(v) => updateDraft({ low: v })} upperBound={draft.high} tabbable={settingsTabbable} index={[1, 2]} ref={lowElement} value={draft.low} min={60} max={150}></ValueBox>
                     ) : (
@@ -103,24 +108,24 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
                     )}
                   </div>
                   <div className="version">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Theme</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Theme</div>
                     <SegmentedButton
                       changeHandler={(btn: number) => {
-                        updateDraft({ sensor: btn === 1 ? "G7" : "G6" });
+                        updateDraft({ theme: btn === 1 ? "light" : "dark" });
                       }}
                       tabbable={settingsTabbable}
                       index={[5, 6]}
-                      ref={sensorElement}
-                      buttonOne="G7"
-                      buttonTwo="G6"
-                      activeButton={draft.sensor === "G7" ? 1 : 2}></SegmentedButton>
+                      ref={themeElement}
+                      buttonOne="Light"
+                      buttonTwo="Dark"
+                      activeButton={(draft.theme === "system" ? resolvedTheme : draft.theme) === "light" ? 1 : 2}></SegmentedButton>
                   </div>
                   <div className="widget-indicator">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Indicator</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Indicator</div>
                     <Toggle checked={draft.widgetShowIndicator} onChange={(v) => updateDraft({ widgetShowIndicator: v })} tabIndex={settingsTabbable ? 21 : -1} />
                   </div>
                   <div className="widget-opacity">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Opacity</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Opacity</div>
                     <Slider
                       min={0.3}
                       max={1.0}
@@ -135,7 +140,7 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
 
                 <div className="w-full flex flex-col content-start gap-8">
                   <div className="high">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">High</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">High</div>
                     {draft.unit === "mg/dl" ? (
                       <ValueBox valueBoxHandler={(v) => updateDraft({ high: v })} lowerBound={draft.low} tabbable={settingsTabbable} index={[3, 4]} ref={highElement} value={draft.high} min={150} max={400}></ValueBox>
                     ) : (
@@ -151,7 +156,7 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
                     )}
                   </div>
                   <div className="unit">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Unit</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Unit</div>
                     <SegmentedButton
                       changeHandler={(btn: number) => {
                         updateDraft({ unit: btn === 1 ? "mg/dl" : "mmol/l" });
@@ -164,15 +169,15 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
                       activeButton={draft.unit === "mg/dl" ? 1 : 2}></SegmentedButton>
                   </div>
                   <div className="widget-sparkline">
-                    <div className="text-dex-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Sparkline</div>
+                    <div className="text-app-text text-sm select-none font-medium mb-1.5 ml-0.5">Widget Sparkline</div>
                     <Toggle checked={draft.widgetShowSparkline} onChange={(v) => updateDraft({ widgetShowSparkline: v })} tabIndex={settingsTabbable ? 22 : -1} />
                   </div>
                   <div className="launch-at-login">
                     <div className="flex items-center gap-1.5 mb-1.5 ml-0.5">
-                      <div className="text-dex-text text-sm select-none font-medium">Launch at Login</div>
+                      <div className="text-app-text text-sm select-none font-medium">Launch at Login</div>
                       <div className="group relative flex items-center">
-                        <Info className="size-3 text-dex-text-light" strokeWidth={2.5} />
-                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 px-2 py-1 text-[10px] font-medium text-dex-bg bg-dex-text rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                        <Info className="size-3 text-app-text-subtle" strokeWidth={2.5} />
+                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 px-2 py-1 text-[10px] font-medium text-app-surface bg-app-text rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
                           automatically open the app when you log in to your computer
                         </div>
                       </div>
@@ -184,7 +189,7 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
 
               <div className="w-full flex flex-row mt-auto justify-end gap-1">
                 <Button
-                  className="mr-auto focus-visible:outline-dex-green outline-transparent text-sm pl-[14.15px] pr-[14.25px]"
+                  className="mr-auto focus-visible:outline-brand outline-transparent text-sm pl-[14.15px] pr-[14.25px]"
                   text="Log Out"
                   tabbable={settingsTabbable}
                   tabIndex={settingsTabbable ? 11 : -1}
@@ -193,13 +198,13 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
                     onOpenConfirm();
                   }}></Button>
                 <Button
-                  className="text-sm py-2 pl-3.5 pr-[14.25px] bg-dex-bg hover:bg-dex-bg text-dex-text-muted hover:text-dex-text "
+                  className="text-sm py-2 pl-3.5 pr-[14.25px] bg-app-surface hover:bg-app-surface text-app-text-muted hover:text-app-text "
                   text="Cancel"
                   tabbable={settingsTabbable}
                   tabIndex={settingsTabbable ? 10 : -1}
                   click={onClose}></Button>
                 <Button
-                  className="focus-visible:outline-dex-green outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
+                  className="focus-visible:outline-brand outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
                   text="Save"
                   tabbable={settingsTabbable}
                   tabIndex={settingsTabbable ? 9 : -1}
@@ -215,19 +220,19 @@ export const Settings = forwardRef<HTMLDivElement, SettingsProps>(
           initial="hidden"
           animate={confirmActive ? "visible" : "hidden"}
           transition={{ duration: 0.2 }}
-          className={`w-max absolute rounded-lg bg-dex-bg drop-shadow-2xl left-1/2 top-1/2 p-6 z-30 ${confirmActive ? "" : "pointer-events-none"}`}>
-          <div className="text-nowrap mb-1 text-lg font-semibold text-dex-text">Confirm</div>
-          <div className="mb-6 text-sm font-normal text-dex-text-muted">Are you sure you want to log out?</div>
+          className={`w-max absolute rounded-lg bg-app-surface drop-shadow-2xl left-1/2 top-1/2 p-6 z-30 ${confirmActive ? "" : "pointer-events-none"}`}>
+          <div className="text-nowrap mb-1 text-lg font-semibold text-app-text">Confirm</div>
+          <div className="mb-6 text-sm font-normal text-app-text-muted">Are you sure you want to log out?</div>
           <div className="flex justify-end gap-2">
             <Button
-              className="text-sm py-2 pl-3.5 pr-[14.25px] bg-dex-bg hover:bg-dex-bg text-dex-text-muted hover:text-dex-text "
+              className="text-sm py-2 pl-3.5 pr-[14.25px] bg-app-surface hover:bg-app-surface text-app-text-muted hover:text-app-text "
               text="No"
               tabbable={confirmTabbable}
               click={() => {
                 onCloseConfirm();
               }}></Button>
             <Button
-              className="focus-visible:outline-dex-green outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
+              className="focus-visible:outline-brand outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
               text="Yes"
               tabbable={confirmTabbable}
               click={() => {
@@ -252,14 +257,14 @@ interface SegmentedButtonProps extends ComponentProps<"div"> {
 
 const SegmentedButton = forwardRef<HTMLDivElement, SegmentedButtonProps>(({ children, className, buttonOne, buttonTwo, activeButton, tabbable, index, changeHandler, ...props }, ref) => {
   return (
-    <div ref={ref} className={twMerge("w-fit flex items-center justify-center p-1 gap-1 rounded-lg bg-dex-fg-light text-dex-text-light", className)} {...props}>
+    <div ref={ref} className={twMerge("w-[200px] flex items-center justify-center p-1 gap-1 rounded-lg bg-app-background-light text-app-text-subtle", className)} {...props}>
       <button
         tabIndex={tabbable ? index[0] : -1}
         onClick={() => {
           changeHandler(1);
         }}
         data-state={activeButton === 1 ? "active" : ""}
-        className="cursor-pointer focus-visible:outline-dex-green select-none outline-transparent outline outline-2 flex items-center justify-center whitespace-nowrap rounded-md min-w-[72px] px-6 py-1 text-sm font-normal hover:bg-dex-fg data-[state=active]:bg-dex-bg data-[state=active]:drop-shadow-ms data-[state=active]:text-dex-text data-[state=active]:font-medium">
+        className="cursor-pointer focus-visible:outline-brand select-none outline-transparent outline outline-2 flex flex-1 min-w-0 items-center justify-center whitespace-nowrap rounded-md px-4 py-1 text-sm font-normal hover:bg-app-background data-[state=active]:bg-app-surface data-[state=active]:text-app-text data-[state=active]:font-medium">
         {buttonOne}
       </button>
       <button
@@ -268,7 +273,7 @@ const SegmentedButton = forwardRef<HTMLDivElement, SegmentedButtonProps>(({ chil
           changeHandler(2);
         }}
         data-state={activeButton === 2 ? "active" : ""}
-        className="cursor-pointer focus-visible:outline-dex-green select-none outline-transparent outline outline-2 flex items-center justify-center whitespace-nowrap rounded-md min-w-[72px] px-6 py-1 text-sm font-normal hover:bg-dex-fg data-[state=active]:bg-dex-bg data-[state=active]:drop-shadow-ms data-[state=active]:text-dex-text data-[state=active]:font-medium">
+        className="cursor-pointer focus-visible:outline-brand select-none outline-transparent outline outline-2 flex flex-1 min-w-0 items-center justify-center whitespace-nowrap rounded-md px-4 py-1 text-sm font-normal hover:bg-app-background data-[state=active]:bg-app-surface data-[state=active]:text-app-text data-[state=active]:font-medium">
         {buttonTwo}
       </button>
     </div>
@@ -325,16 +330,16 @@ const ValueBox = forwardRef<HTMLDivElement, ValueBoxProps>(({ children, classNam
   }
 
   return (
-    <div ref={ref} className={twMerge("w-[145.6px] flex relative gap-1.5 bg-dex-fg-light py-1.5 px-1.5 items-center justify-center rounded-lg ", className)} {...props}>
+    <div ref={ref} className={twMerge("w-[145.6px] flex relative gap-1.5 bg-app-background-light py-1.5 px-1.5 items-center justify-center rounded-lg ", className)} {...props}>
       <button
         tabIndex={tabbable ? index[0] : -1}
         onPointerDown={() => startHold(-5)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
-        className="cursor-pointer focus-visible:outline-dex-green outline-transparent outline outline-2 mr-auto p-1 rounded text-dex-text-muted hover:text-dex-text-muted bg-dex-fg-light hover:bg-dex-fg">
+        className="cursor-pointer focus-visible:outline-brand outline-transparent outline outline-2 mr-auto p-1 rounded text-app-text-muted hover:text-app-text-muted bg-app-background-light hover:bg-app-background">
         <ChevronLeft className="size-4 p-0.5" strokeWidth={3.5} />
       </button>
-      <div className="w-[72px] h-7 px-6 select-none rounded-md drop-shadow-ms absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] bg-dex-bg p-2 text-dex-text text-sm font-medium text-center flex items-center justify-center">
+      <div className="w-[72px] h-7 px-6 select-none rounded-md absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] bg-app-surface p-2 text-app-text text-sm font-medium text-center flex items-center justify-center">
         {value}
       </div>
       <button
@@ -342,7 +347,7 @@ const ValueBox = forwardRef<HTMLDivElement, ValueBoxProps>(({ children, classNam
         onPointerDown={() => startHold(5)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
-        className="cursor-pointer focus-visible:outline-dex-green outline-transparent outline outline-2 ml-auto p-1 rounded text-dex-text-muted hover:text-dex-text-muted bg-dex-fg-light hover:bg-dex-fg">
+        className="cursor-pointer focus-visible:outline-brand outline-transparent outline outline-2 ml-auto p-1 rounded text-app-text-muted hover:text-app-text-muted bg-app-background-light hover:bg-app-background">
         <ChevronRight className="size-4 p-0.5" strokeWidth={3.5} />
       </button>
     </div>
@@ -388,16 +393,16 @@ const ValueBoxMMOLL = forwardRef<HTMLDivElement, ValueBoxProps>(({ children, cla
   }
 
   return (
-    <div ref={ref} className={twMerge("w-[145.6px] flex relative gap-1.5 bg-dex-fg-light py-1.5 px-1.5 items-center justify-center rounded-lg ", className)} {...props}>
+    <div ref={ref} className={twMerge("w-[145.6px] flex relative gap-1.5 bg-app-background-light py-1.5 px-1.5 items-center justify-center rounded-lg ", className)} {...props}>
       <button
         tabIndex={tabbable ? index[0] : -1}
         onPointerDown={() => startHold(-0.5)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
-        className="cursor-pointer focus-visible:outline-dex-green outline-transparent outline outline-2 mr-auto p-1 rounded text-dex-text-muted hover:text-dex-text-muted bg-dex-fg-light hover:bg-dex-fg">
+        className="cursor-pointer focus-visible:outline-brand outline-transparent outline outline-2 mr-auto p-1 rounded text-app-text-muted hover:text-app-text-muted bg-app-background-light hover:bg-app-background">
         <ChevronLeft className="size-4 p-0.5" strokeWidth={3.5} />
       </button>
-      <div className="w-[72px] h-7 px-6 select-none rounded-md drop-shadow-ms absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] bg-dex-bg p-2 text-dex-text text-sm font-medium text-center flex items-center justify-center">
+      <div className="w-[72px] h-7 px-6 select-none rounded-md absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] bg-app-surface p-2 text-app-text text-sm font-medium text-center flex items-center justify-center">
         {value.toFixed(1)}
       </div>
       <button
@@ -405,7 +410,7 @@ const ValueBoxMMOLL = forwardRef<HTMLDivElement, ValueBoxProps>(({ children, cla
         onPointerDown={() => startHold(0.5)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
-        className="cursor-pointer focus-visible:outline-dex-green outline-transparent outline outline-2 ml-auto p-1 rounded text-dex-text-muted hover:text-dex-text-muted bg-dex-fg-light hover:bg-dex-fg">
+        className="cursor-pointer focus-visible:outline-brand outline-transparent outline outline-2 ml-auto p-1 rounded text-app-text-muted hover:text-app-text-muted bg-app-background-light hover:bg-app-background">
         <ChevronRight className="size-4 p-0.5" strokeWidth={3.5} />
       </button>
     </div>

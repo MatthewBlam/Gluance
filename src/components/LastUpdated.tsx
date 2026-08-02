@@ -17,7 +17,7 @@ export function LastUpdated({ dateTime }: LastUpdatedProps) {
     if (!relative) return null;
 
     return (
-        <span className="text-xs text-dex-text-muted">
+        <span className="text-xs text-app-text-muted">
             Updated {relative}
         </span>
     );

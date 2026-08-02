@@ -91,9 +91,8 @@ typings/
 # Python build artifacts
 python/dist/
 python/build/
-python/dexcom.spec
+python/gluance-backend.spec
 __pycache__/
 
 # Electron-Forge
 out/
-

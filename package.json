@@ -1,15 +1,23 @@
 {
-    "name": "dexcom-desktop-application",
-    "productName": "Dexcom",
+    "name": "gluance",
+    "productName": "Gluance",
     "version": "1.0.0",
-    "description": "Dexcom G6 & G7 readings on the computer",
+    "description": "Gluance displays glucose readings from the Dexcom Share API on your computer",
+    "homepage": "https://gluance.vercel.app/",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MatthewBlam/Gluance.git"
+    },
+    "bugs": {
+        "url": "https://github.com/MatthewBlam/Gluance/issues"
+    },
     "main": ".vite/build/main.js",
     "engines": {
         "node": ">=18 <24"
     },
     "scripts": {
         "start": "electron-forge start",
-        "build:python": "cd python && pip install -r requirements.txt && pyinstaller --onefile --name dexcom -y --collect-submodules dexcom_server --collect-submodules uvicorn entry.py && cp dist/dexcom ../src/dexcom",
+        "build:python": "cd python && pip install -r requirements.txt && pyinstaller --onefile --name gluance-backend -y --collect-submodules gluance_server --collect-submodules uvicorn entry.py && cp dist/gluance-backend ../src/gluance-backend",
         "package": "npm run build:python && electron-forge package",
         "make": "npm run build:python && electron-forge make",
         "publish": "electron-forge publish",

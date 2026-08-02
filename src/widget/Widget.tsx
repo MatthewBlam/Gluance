@@ -2,21 +2,28 @@ import { StrictMode, useEffect, useRef, useState } from "react";
 import { RootLayout } from "../components/RootLayout";
 import "inter-ui/inter.css";
 import { useSettingsContext } from "../contexts/SettingsContext";
-import { DexcomG6, DexcomG7 } from "../components/Dexcom";
+import { GlucoseIndicator } from "../components/GlucoseIndicator";
 import { motion } from "motion/react";
-import { Reading, DEFAULT_READING } from "../shared/types";
+import { Reading, DEFAULT_READING, type Trend } from "../shared/types";
 import { formatReading } from "../shared/reading-utils";
 import { Sparkline } from "../components/Sparkline";
+import { useApplyTheme } from "../hooks/useApplyTheme";
+
+export const getSparklineMarginClass = (trend: Trend) => {
+  if (trend === "DoubleDown") return "mt-8";
+  if (trend === "SingleDown") return "mt-6";
+  return "mt-2";
+};
 
 const Widget = () => {
   const [mouseInteractive, setMouseInteractive] = useState(false);
   const [widgetPosition, setWidgetPosition] = useState<{ left: number; top: number } | null>(null);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const { settings: currentSettings, setSettings } = useSettingsContext();
+  useApplyTheme(currentSettings.theme);
 
   const widgetPixelSize = 125;
-
-  const G7theme = currentSettings.sensor === "G7";
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,7 +58,10 @@ const Widget = () => {
       .then((s) => {
         setSettings(s);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setSettingsLoaded(true);
+      });
     window.api
       .getHistory(60)
       .then((history) => {
@@ -107,7 +117,7 @@ const Widget = () => {
     <StrictMode>
       <RootLayout duration={0.3} delay={0}>
         <motion.div className="w-full h-full bg-transparent" ref={containerRef}>
-          {widgetPosition && (
+          {widgetPosition && settingsLoaded && (
             <motion.div
               drag={true}
               dragConstraints={containerRef}
@@ -122,11 +132,11 @@ const Widget = () => {
               onDragEnd={savePosition}>
               {currentSettings.widgetShowIndicator && (
                 <div style={{ width: widgetPixelSize, height: widgetPixelSize }}>
-                  {G7theme ? <DexcomG7 trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)}></DexcomG7> : <DexcomG6 trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)}></DexcomG6>}
+                  <GlucoseIndicator trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)} />
                 </div>
               )}
               {currentSettings.widgetShowSparkline && (
-                <div className="mt-2 rounded-lg px-3 py-3 pointer-events-none bg-white shadow-md">
+                <div className={`${getSparklineMarginClass(trend)} rounded-lg px-3 py-3 pointer-events-none bg-app-surface drop-shadow-ms`}>
                   <Sparkline readings={readings} width={widgetPixelSize - 24} height={24} />
                 </div>
               )}

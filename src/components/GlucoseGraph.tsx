@@ -31,10 +31,10 @@ function CustomDot(props: any) {
     if (cx == null || cy == null) return null;
     const color =
         payload.range === "high"
-            ? "var(--color-dex-yellow)"
+            ? "var(--color-reading-high)"
             : payload.range === "low"
-              ? "var(--color-dex-red)"
-              : "var(--color-dex-green)";
+              ? "var(--color-reading-low)"
+              : "var(--color-brand)";
     return <Dot cx={cx} cy={cy} r={2.5} fill={color} stroke="none" />;
 }
 
@@ -83,26 +83,26 @@ export function GlucoseGraph({ readings, settings, timeRange, graphHeight }: Glu
         const point = payload[0].payload as DataPoint;
         const color =
             point.range === "high"
-                ? "var(--color-dex-yellow)"
+                ? "var(--color-reading-high)"
                 : point.range === "low"
-                  ? "var(--color-dex-red)"
-                  : "var(--color-dex-green)";
+                  ? "var(--color-reading-low)"
+                  : "var(--color-brand)";
         const timeStr = new Date(point.time).toLocaleTimeString([], {
             hour: "numeric",
             minute: "2-digit",
         });
         return (
-            <div className="bg-dex-text text-dex-bg text-[10px] font-medium px-2 py-1 rounded whitespace-nowrap">
+            <div className="bg-app-text text-app-surface text-[10px] font-medium px-2 py-1 rounded whitespace-nowrap">
                 <span style={{ color }}>{point.value}</span>
-                <span className="ml-0.5 text-dex-fg-dark">{unitLabel}</span>
-                <span className="ml-1.5 text-dex-fg-dark">{timeStr}</span>
+                <span className="ml-0.5 text-app-border">{unitLabel}</span>
+                <span className="ml-1.5 text-app-border">{timeStr}</span>
             </div>
         );
     }
 
     if (data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-full text-sm text-dex-text-muted select-none">
+            <div className="flex items-center justify-center h-full text-sm text-app-text-muted select-none">
                 No readings in this time range
             </div>
         );
@@ -116,15 +116,15 @@ export function GlucoseGraph({ readings, settings, timeRange, graphHeight }: Glu
                     type="number"
                     domain={[cutoff, now]}
                     tickFormatter={(ts) => new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-                    tick={{ fontSize: 10, fill: "var(--color-dex-text-muted)" }}
+                    tick={{ fontSize: 10, fill: "var(--color-app-text-muted)" }}
                     tickLine={false}
-                    axisLine={{ stroke: "var(--color-dex-fg)" }}
+                    axisLine={{ stroke: "var(--color-app-background)" }}
                     minTickGap={40}
                 />
                 <YAxis
                     domain={[yMin, yMax]}
                     ticks={[criticalLow, low, high, yMax]}
-                    tick={{ fontSize: 10, fill: "var(--color-dex-text-muted)" }}
+                    tick={{ fontSize: 10, fill: "var(--color-app-text-muted)" }}
                     tickLine={false}
                     axisLine={false}
                 />
@@ -133,13 +133,13 @@ export function GlucoseGraph({ readings, settings, timeRange, graphHeight }: Glu
                     cursor={false}
                     isAnimationActive={false}
                 />
-                <ReferenceArea y1={low} y2={high} fill="var(--color-dex-green)" fillOpacity={0.06} />
-                <ReferenceArea y1={high} y2={yMax} fill="var(--color-dex-yellow)" fillOpacity={0.06} />
-                <ReferenceArea y1={criticalLow} y2={low} fill="var(--color-dex-red)" fillOpacity={0.04} />
-                <ReferenceArea y1={yMin} y2={criticalLow} fill="var(--color-dex-red)" fillOpacity={0.08} />
-                <ReferenceLine y={high} stroke="var(--color-dex-yellow)" strokeDasharray="4 4" strokeWidth={1} />
-                <ReferenceLine y={low} stroke="var(--color-dex-red)" strokeDasharray="4 4" strokeWidth={1} />
-                <ReferenceLine y={criticalLow} stroke="var(--color-dex-red)" strokeWidth={1.5} />
+                <ReferenceArea y1={low} y2={high} fill="var(--color-brand)" fillOpacity={0.06} />
+                <ReferenceArea y1={high} y2={yMax} fill="var(--color-reading-high)" fillOpacity={0.06} />
+                <ReferenceArea y1={criticalLow} y2={low} fill="var(--color-reading-low)" fillOpacity={0.04} />
+                <ReferenceArea y1={yMin} y2={criticalLow} fill="var(--color-reading-low)" fillOpacity={0.08} />
+                <ReferenceLine y={high} stroke="var(--color-reading-high)" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine y={low} stroke="var(--color-reading-low)" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine y={criticalLow} stroke="var(--color-reading-low)" strokeWidth={1.5} />
                 <Line
                     type="monotone"
                     dataKey="value"

@@ -45,7 +45,7 @@ export function Sparkline({ readings, width = 120, height = 30 }: SparklineProps
 
     if (!points) return null;
 
-    const colorMap = { high: "var(--color-dex-yellow)", low: "var(--color-dex-red)", normal: "var(--color-dex-green)" };
+    const colorMap = { high: "var(--color-reading-high)", low: "var(--color-reading-low)", normal: "var(--color-brand)" };
 
     return (
         <svg

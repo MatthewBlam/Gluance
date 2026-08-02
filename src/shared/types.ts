@@ -8,6 +8,9 @@ export type Trend =
     | "SingleDown"
     | "DoubleDown";
 
+export type ThemeMode = "system" | "light" | "dark";
+export type ResolvedThemeMode = Exclude<ThemeMode, "system">;
+
 export interface Reading {
     id: string;
     value: number;
@@ -21,7 +24,7 @@ export interface Reading {
 }
 
 export interface Settings {
-    sensor: "G6" | "G7";
+    theme: ThemeMode;
     unit: "mg/dl" | "mmol/l";
     high: number;
     low: number;
@@ -61,7 +64,7 @@ export const DEFAULT_READING: Reading = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-    sensor: "G7",
+    theme: "system",
     unit: "mg/dl",
     high: 200,
     low: 70,

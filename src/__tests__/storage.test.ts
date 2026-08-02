@@ -106,17 +106,50 @@ describe("Storage", () => {
     });
 
     it("merges stored settings with defaults", () => {
-      setupFs({ settings: { sensor: "G6", high: 180 } });
+      setupFs({ settings: { theme: "dark", high: 180 } });
       const storage = createStorage();
       const settings = storage.getSettings();
-      expect(settings.sensor).toBe("G6");
+      expect(settings.theme).toBe("dark");
       expect(settings.high).toBe(180);
       expect(settings.unit).toBe("mg/dl");
       expect(settings.low).toBe(70);
     });
 
+    it("defaults to the system theme and removes unknown legacy fields", () => {
+      setupFs({
+        settings: {
+          high: 180,
+          legacyIndicator: "retired",
+        },
+      });
+      const storage = createStorage();
+
+      expect(storage.getSettings()).toEqual({
+        ...DEFAULT_SETTINGS,
+        high: 180,
+      });
+      expect(fileData.settings.legacyIndicator).toBeUndefined();
+      expect(fileData.settings.theme).toBe("system");
+    });
+
+    it("replaces an invalid stored theme with the system default", () => {
+      setupFs({ settings: { theme: "contrast" } });
+      const storage = createStorage();
+
+      expect(storage.getSettings().theme).toBe("system");
+      expect(fileData.settings.theme).toBe("system");
+    });
+
+    it("preserves a manually selected light theme", () => {
+      setupFs({ settings: { theme: "light" } });
+      const storage = createStorage();
+
+      expect(storage.getSettings().theme).toBe("light");
+      expect(fileData.settings.theme).toBe("light");
+    });
+
     it("resets settings to defaults", () => {
-      setupFs({ settings: { sensor: "G6" } });
+      setupFs({ settings: { theme: "dark" } });
       const storage = createStorage();
       storage.resetSettings();
       expect(storage.getSettings()).toEqual(DEFAULT_SETTINGS);

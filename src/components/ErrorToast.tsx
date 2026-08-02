@@ -25,13 +25,13 @@ export const ErrorToast = forwardRef<HTMLDivElement, ErrorToastProps>(({ childre
         duration: 0.1,
       }}
       ref={ref}
-      className={twMerge("flex w-max content-center align-middle justify-center gap-2.5 px-4 py-3 rounded bg-dex-red select-none", className)}
+      className={twMerge("flex w-max content-center align-middle justify-center gap-2.5 px-4 py-3 rounded bg-reading-low select-none", className)}
       {...props}>
-      <TriangleAlert className="shrink-0 w-[18px] h-[18px] text-dex-bg" strokeWidth={2} />
+      <TriangleAlert className="shrink-0 w-[18px] h-[18px] text-on-error" strokeWidth={2} />
 
-      <span className="flex items-center font-semibold text-xs pr-1 text-dex-bg select-none">{text.trim()}</span>
+      <span className="flex items-center font-semibold text-xs pr-1 text-on-error select-none">{text.trim()}</span>
 
-      <X onClick={close} className="shrink-0 size-4 text-dex-fg hover:text-dex-bg cursor-pointer pt-[1.25px]" strokeWidth={2.75} />
+      <X onClick={close} className="shrink-0 size-4 text-on-error/70 hover:text-on-error cursor-pointer pt-[1.25px]" strokeWidth={2.75} />
     </motion.div>
   );
 });

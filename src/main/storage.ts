@@ -10,8 +10,6 @@ import {
   DEFAULT_SETTINGS,
 } from "../shared/types";
 
-const CONFIG_PATH = path.join(app.getPath("userData"), "config.json");
-
 export class Storage {
   private data: Record<string, any>;
 
@@ -24,20 +22,24 @@ export class Storage {
     }
 
     try {
-      fs.chmodSync(CONFIG_PATH, 0o600);
+      fs.chmodSync(this.configPath, 0o600);
     } catch {}
+  }
+
+  private get configPath(): string {
+    return path.join(app.getPath("userData"), "config.json");
   }
 
   private load(): Record<string, any> {
     try {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
+      return JSON.parse(fs.readFileSync(this.configPath, "utf-8"));
     } catch {
       return {};
     }
   }
 
   private persist(): void {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(this.data, null, 2), { mode: 0o600 });
+    fs.writeFileSync(this.configPath, JSON.stringify(this.data, null, 2), { mode: 0o600 });
   }
 
   private get<T>(key: string, fallback: T): T {
@@ -117,9 +119,39 @@ export class Storage {
   }
 
   getSettings(): Settings {
-    const stored = this.data["settings"];
-    if (!stored) return this.get("settings", DEFAULT_SETTINGS);
-    return { ...DEFAULT_SETTINGS, ...stored };
+    const stored =
+      typeof this.data["settings"] === "object" &&
+      this.data["settings"] !== null
+        ? this.data["settings"] as Record<string, unknown>
+        : {};
+    const knownEntries = Object.keys(DEFAULT_SETTINGS)
+      .filter(
+        (key) =>
+          stored[key] !== undefined &&
+          typeof stored[key] ===
+            typeof DEFAULT_SETTINGS[key as keyof Settings],
+      )
+      .map((key) => [key, stored[key]]);
+    const normalized = {
+      ...DEFAULT_SETTINGS,
+      ...Object.fromEntries(knownEntries),
+    } as Settings;
+
+    if (
+      normalized.theme !== "system" &&
+      normalized.theme !== "light" &&
+      normalized.theme !== "dark"
+    ) {
+      normalized.theme = DEFAULT_SETTINGS.theme;
+    }
+    if (normalized.unit !== "mg/dl" && normalized.unit !== "mmol/l") {
+      normalized.unit = DEFAULT_SETTINGS.unit;
+    }
+
+    if (JSON.stringify(this.data["settings"]) !== JSON.stringify(normalized)) {
+      this.set("settings", normalized);
+    }
+    return normalized;
   }
 
   saveSettings(settings: Settings): void {

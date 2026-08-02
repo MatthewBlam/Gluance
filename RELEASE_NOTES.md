@@ -1,73 +1,68 @@
-# Dexcom macOS v1.0.0
+# Gluance v1.0.0
 
-The first official release of Dexcom macOS: an unofficial macOS app for viewing and monitoring Dexcom continuous glucose monitor readings on your computer.
+The first official release of Gluance, a macOS app for viewing and monitoring continuous glucose readings from a Dexcom account.
 
-_Make sure you have at least one Dexcom Share follower in order to use Dexcom macOS._
+Gluance is an independent, unofficial application and is not affiliated with or endorsed by Dexcom, Inc.
+
+_Make sure you have at least one Dexcom Share follower before signing in._
 
 ## Features
 
-### Real-Time Glucose Monitoring
+### Real-time glucose monitoring
 
-- Live glucose readings streamed from your Dexcom account via WebSocket
-- Trend arrows and direction indicators matching the Dexcom mobile app
-- Rate of change display
-- Connection status indicator with automatic reconnection
+- Live readings streamed from your Dexcom account over WebSocket
+- Trend arrows, rate of change, and connection status
+- Automatic reconnection and 24-hour history backfill
+- Device-agnostic glucose indicator with light and dark themes
 
-### Glucose History
+### Glucose history
 
-- Interactive glucose graph with configurable time ranges (1h, 3h, 6h, 12h, 24h)
-- Color-coded readings based on your high/low thresholds (green, yellow, red)
-- 24-hour history backfill on login
+- Interactive graph with 1-, 3-, 6-, 12-, and 24-hour ranges
+- Color-coded readings based on configurable high and low thresholds
+- mg/dL and mmol/L support
 
-### Floating Widget
+### Floating widget
 
-- Always-on-top draggable widget overlay showing your current reading
-- Optional sparkline graph
-- Optional trend indicator
-- Adjustable opacity
-- Remembers position between sessions
+- Always-on-top draggable reading
+- Optional sparkline and glucose indicator
+- Adjustable opacity and remembered position
 
-### System Tray
+### macOS integration
 
-- Menu bar icon with current glucose value
-- Quick access to open/close the widget
-- Quit from the tray
+- Menu bar glucose reading
+- Quick widget controls
+- Launch at login through `com.matthewblam.gluance.plist`
+- `Gluance.app` with bundle ID `com.matthewblam.gluance`
 
-### Settings
+### Security and privacy
 
-- Dexcom G6 and G7 themes
-- mg/dL and mmol/L unit switching
-- Configurable high and low thresholds
-- Critical low threshold
-- Launch at login (via macOS LaunchAgent)
-- Widget indicator, sparkline, and opacity controls
+- Dexcom account credentials encrypted at rest using macOS Keychain through Electron `safeStorage`
+- No credentials passed through command-line arguments
+- Direct access to the Dexcom Share API through `pydexcom`; Gluance operates no remote data server
+- Production Content Security Policy
 
-### Multi-Region Support
+## System requirements
 
-- United States
-- Japan
-- Outside US (international)
-
-### Security
-
-- Credentials encrypted at rest using macOS Keychain (via Electron safeStorage)
-- No credentials passed through CLI arguments
-- Content Security Policy enforced in production
-
-## System Requirements
-
-- macOS (Apple Silicon and Intel)
-- A Dexcom account with active sensor session
+- macOS on Apple silicon or Intel
+- A Dexcom account with an active sensor session available through Dexcom Share
+- At least one Dexcom Share follower
 - Internet connection
 
 ## Installation
 
-Download the DMG from the [releases page](https://github.com/MatthewBlam/Dexcom-macOS/releases/tag/v1.0.0), open it, and drag Dexcom to your Applications folder.
+Download the DMG from the [Gluance v1.0.0 release](https://github.com/MatthewBlam/Gluance/releases/tag/v1.0.0), open it, and drag Gluance to your Applications folder.
 
-## Known Limitations
+## Known limitations
 
-- The app is not code-signed or notarized. On first launch, right-click the app and select "Open" to bypass Gatekeeper, or go to System Settings > Privacy & Security and click "Open Anyway."
-- "Launch at Login" registers as a background item (via LaunchAgent) rather than appearing under Login Items in System Settings. You may see a one-time "Background Items Added" notification.
+- If a build is not code-signed or notarized, right-click Gluance and choose **Open**, or use **System Settings → Privacy & Security → Open Anyway**.
+- Launch at Login registers a LaunchAgent and may trigger a one-time “Background Items Added” notification.
+- Gluance uses a new application identity and does not migrate data from earlier builds. Sign in and configure the app again.
+
+## Links
+
+- [Repository](https://github.com/MatthewBlam/Gluance)
+- [Release](https://github.com/MatthewBlam/Gluance/releases/tag/v1.0.0)
+- [Demo](https://gluance.vercel.app/)
 
 ## License
 

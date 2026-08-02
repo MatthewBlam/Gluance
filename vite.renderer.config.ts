@@ -23,7 +23,7 @@ export default defineConfig((env) => {
                     copy({
                         targets: [
                             {
-                                src: "src/graphics/**/*",
+                                src: "src/graphics/app-logo-trayTemplate*.png",
                                 dest: ".vite/assets/graphics",
                             },
                         ],

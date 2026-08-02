@@ -15,6 +15,7 @@ import { useSettingsManager } from "../hooks/useSettingsManager";
 import { useAuth } from "../hooks/useAuth";
 import { useWidgetLifecycle } from "../hooks/useWidgetLifecycle";
 import { useConnectionManager } from "../hooks/useConnectionManager";
+import { useApplyTheme } from "../hooks/useApplyTheme";
 
 const variants = {
   hidden: { opacity: 0, x: "-50%", y: "-50%" },
@@ -27,10 +28,6 @@ const App = () => {
   const widget = useWidgetLifecycle();
   const connection = useConnectionManager();
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "var(--color-dex-fg)";
-  }, []);
-
   // --- UI overlay state ---
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [dimmerOn, setDimmerOn] = useState(false);
@@ -38,6 +35,12 @@ const App = () => {
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pythonError, setPythonError] = useState(false);
+
+  const resolvedTheme = useApplyTheme(
+    settingsOpen
+      ? settingsManager.draft.theme
+      : settingsManager.committed.theme,
+  );
 
   // --- Page animation ---
   const [loginOpen, setLoginOpen] = useState(true);
@@ -208,8 +211,11 @@ const App = () => {
   return (
     <StrictMode>
       <DraggableTopBar></DraggableTopBar>
-      <RootLayout duration={1} delay={0.5} animate={auth.isLoaded ? { opacity: 1 } : { opacity: 0 }} className={twMerge("pt-10 w-full", "bg-dex-fg")}>
-        <motion.div ref={loginScope} initial={{ x: "-200%" }} className={twMerge("absolute left-1/2 w-full h-full flex justify-center items-center", clsx({ "pointer-events-none": auth.hasCredentials }))}>
+      <RootLayout duration={1} delay={0.5} animate={auth.isLoaded ? { opacity: 1 } : { opacity: 0 }} className={twMerge("pt-10 w-full", "bg-app-background")}>
+        <motion.div
+          ref={loginScope}
+          initial={{ x: "-200%" }}
+          className={twMerge("absolute left-1/2 w-full h-full flex justify-center items-center", clsx({ "pointer-events-none": auth.hasCredentials }))}>
           <Login
             userVal={auth.userVal}
             passwordVal={auth.passwordVal}
@@ -275,7 +281,8 @@ const App = () => {
           confirmTabbable={confirmOpen}
           onOpenConfirm={openConfirm}
           onCloseConfirm={closeConfirm}
-          onLogout={handleLogout}></Settings>
+          onLogout={handleLogout}
+          resolvedTheme={resolvedTheme}></Settings>
       )}
 
       <motion.div
@@ -284,19 +291,19 @@ const App = () => {
         initial="hidden"
         animate={pythonError ? "visible" : "hidden"}
         transition={{ duration: 0.2 }}
-        className={`w-max absolute rounded-lg bg-dex-bg drop-shadow-2xl left-1/2 top-1/2 p-6 z-30 ${pythonError ? "" : "pointer-events-none"}`}>
-        <div className="text-nowrap mb-1 text-lg font-semibold text-dex-text">Dexcom process error</div>
-        <div className="mb-6 text-sm font-normal text-dex-text-muted">You may need to restart Dexcom Desktop Application</div>
+        className={`w-max absolute rounded-lg bg-app-surface drop-shadow-2xl left-1/2 top-1/2 p-6 z-30 ${pythonError ? "" : "pointer-events-none"}`}>
+        <div className="text-nowrap mb-1 text-lg font-semibold text-app-text">Gluance backend error</div>
+        <div className="mb-6 text-sm font-normal text-app-text-muted">You may need to restart Gluance.</div>
         <div className="flex justify-end gap-2">
           <Button
-            className="text-sm py-2 pl-3.5 pr-[14.25px] bg-dex-bg hover:bg-dex-bg text-dex-text-muted hover:text-dex-text "
+            className="text-sm py-2 pl-3.5 pr-[14.25px] bg-app-surface hover:bg-app-surface text-app-text-muted hover:text-app-text "
             text="Ok"
             tabbable={pythonError}
             click={() => {
               closePythonError();
             }}></Button>
           <Button
-            className="focus-visible:outline-dex-green outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
+            className="focus-visible:outline-brand outline-transparent text-sm py-2 pl-3.5 pr-[14.25px]"
             text="Restart"
             tabbable={pythonError}
             click={() => {

@@ -1,4 +1,9 @@
 import { app, Menu, shell } from "electron";
+import {
+  DEMO_URL,
+  RELEASE_URL,
+  REPOSITORY_URL,
+} from "../shared/branding";
 
 export function buildAppMenu(): void {
   const template: Electron.MenuItemConstructorOptions[] = [
@@ -64,9 +69,19 @@ export function buildAppMenu(): void {
         {
           label: "Learn More",
           click: async () => {
-            await shell.openExternal(
-              "https://github.com/MatthewBlam/Dexcom-Desktop-Application"
-            );
+            await shell.openExternal(REPOSITORY_URL);
+          },
+        },
+        {
+          label: "View Release",
+          click: async () => {
+            await shell.openExternal(RELEASE_URL);
+          },
+        },
+        {
+          label: "View Demo",
+          click: async () => {
+            await shell.openExternal(DEMO_URL);
           },
         },
       ],

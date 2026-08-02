@@ -1,6 +1,6 @@
 import type { ConnectionStatus, Credentials, Reading, Settings } from "./types";
 
-export interface DexcomApi {
+export interface GluanceApi {
     // Settings
     getSettings(): Promise<Settings>;
     saveSettings(settings: Settings): Promise<void>;
@@ -56,6 +56,6 @@ export interface DexcomApi {
 
 declare global {
     interface Window {
-        api: DexcomApi;
+        api: GluanceApi;
     }
 }

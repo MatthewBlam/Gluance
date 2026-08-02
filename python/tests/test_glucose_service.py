@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from dexcom_server.glucose_service import (
+from gluance_server.glucose_service import (
     GlucoseService,
     _convert_reading,
     _format_dedup_id,
@@ -15,7 +15,7 @@ from dexcom_server.glucose_service import (
     BASE_POLL_INTERVAL,
     SEEN_IDS_MAX,
 )
-from dexcom_server.models import GlucoseReading
+from gluance_server.models import GlucoseReading
 
 
 class TestFormatTime:
@@ -161,16 +161,16 @@ class TestGlucoseService:
     @pytest.mark.asyncio
     async def test_login_sets_authenticated(self):
         svc = GlucoseService()
-        with patch("dexcom_server.glucose_service.Dexcom") as MockDexcom:
-            MockDexcom.return_value = MagicMock()
+        with patch("gluance_server.glucose_service.Dexcom") as MockClient:
+            MockClient.return_value = MagicMock()
             await svc.login("user", "pass", "us")
             assert svc.authenticated
 
     @pytest.mark.asyncio
     async def test_login_stores_credentials(self):
         svc = GlucoseService()
-        with patch("dexcom_server.glucose_service.Dexcom") as MockDexcom:
-            MockDexcom.return_value = MagicMock()
+        with patch("gluance_server.glucose_service.Dexcom") as MockClient:
+            MockClient.return_value = MagicMock()
             await svc.login("user", "pass", "ous")
             assert svc._username == "user"
             assert svc._password == "pass"
@@ -211,10 +211,10 @@ class TestGlucoseService:
     @pytest.mark.asyncio
     async def test_try_reauth_succeeds(self):
         svc = GlucoseService()
-        with patch("dexcom_server.glucose_service.Dexcom") as MockDexcom:
-            MockDexcom.return_value = MagicMock()
+        with patch("gluance_server.glucose_service.Dexcom") as MockClient:
+            MockClient.return_value = MagicMock()
             await svc.login("user", "pass", "us")
-            svc._dexcom = None
+            svc._client = None
             result = await svc._try_reauth()
             assert result is True
             assert svc.authenticated
@@ -244,9 +244,9 @@ class TestGlucoseService:
         raw.trend_arrow = "→"
         raw.datetime = datetime.datetime(2025, 6, 27, 10, 30, 0)
 
-        mock_dexcom = MagicMock()
-        mock_dexcom.get_current_glucose_reading = MagicMock(return_value=raw)
-        svc._dexcom = mock_dexcom
+        mock_client = MagicMock()
+        mock_client.get_current_glucose_reading = MagicMock(return_value=raw)
+        svc._client = mock_client
 
         await svc.start_polling()
         await asyncio.sleep(0.1)
@@ -263,8 +263,8 @@ class TestGlucoseService:
         callback = AsyncMock()
         svc.on_reading = callback
 
-        mock_dexcom = MagicMock()
-        svc._dexcom = mock_dexcom
+        mock_client = MagicMock()
+        svc._client = mock_client
         svc.pause()
 
         await svc.start_polling()
@@ -279,11 +279,11 @@ class TestGlucoseService:
         error_callback = AsyncMock()
         svc.on_error = error_callback
 
-        mock_dexcom = MagicMock()
-        mock_dexcom.get_current_glucose_reading = MagicMock(
+        mock_client = MagicMock()
+        mock_client.get_current_glucose_reading = MagicMock(
             side_effect=Exception("network error")
         )
-        svc._dexcom = mock_dexcom
+        svc._client = mock_client
 
         await svc.start_polling()
         await asyncio.sleep(0.1)
@@ -305,9 +305,9 @@ class TestGlucoseService:
         raw.trend_arrow = "→"
         raw.datetime = datetime.datetime(2025, 6, 27, 10, 30, 0)
 
-        mock_dexcom = MagicMock()
-        mock_dexcom.get_current_glucose_reading = MagicMock(return_value=raw)
-        svc._dexcom = mock_dexcom
+        mock_client = MagicMock()
+        mock_client.get_current_glucose_reading = MagicMock(return_value=raw)
+        svc._client = mock_client
         svc.on_reading = AsyncMock()
 
         await svc.start_polling()

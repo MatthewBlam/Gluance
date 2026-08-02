@@ -24,7 +24,7 @@ export const Dimmer = ({ active, className, ...props }: DimmerProps) => {
                 duration: 0.3,
             }}
             className={twMerge(
-                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-dex-text z-10",
+                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-app-text z-10",
                 clsx({ "pointer-events-none": !active }),
                 className
             )}
@@ -61,7 +61,7 @@ export const DimmerFlashing = ({
                         ease: "linear",
                     }}
                     className={twMerge(
-                        "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-dex-text z-10",
+                        "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-app-text z-10",
                         clsx({ "pointer-events-none": !active }),
                         className
                     )}

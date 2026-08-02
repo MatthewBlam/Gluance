@@ -1,8 +1,9 @@
 import { writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { APP_NAME, BUNDLE_ID } from "../shared/branding";
 
-const PLIST_NAME = "com.electron.dexcom.plist";
+const PLIST_NAME = `${BUNDLE_ID}.plist`;
 const LAUNCH_AGENTS_DIR = join(homedir(), "Library", "LaunchAgents");
 const PLIST_PATH = join(LAUNCH_AGENTS_DIR, PLIST_NAME);
 
@@ -11,12 +12,12 @@ const PLIST_CONTENT = `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.electron.dexcom</string>
+    <string>${BUNDLE_ID}</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/open</string>
         <string>-a</string>
-        <string>Dexcom</string>
+        <string>${APP_NAME}</string>
         <string>--args</string>
         <string>--launched-at-login</string>
     </array>

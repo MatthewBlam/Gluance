@@ -1,8 +1,7 @@
 import { ComponentProps, forwardRef, MouseEventHandler } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "../components/Button";
-import { DexcomG6, DexcomG7 } from "../components/Dexcom";
-import { useSettingsContext } from "../contexts/SettingsContext";
+import { GlucoseIndicator } from "../components/GlucoseIndicator";
 import { Settings, Expand, Shrink } from "lucide-react";
 import { History } from "../components/History";
 import { Reading, ConnectionStatus } from "../shared/types";
@@ -22,7 +21,6 @@ export interface DisplayProps extends ComponentProps<"div"> {
 
 export const Display = forwardRef<HTMLDivElement, DisplayProps>(
   ({ reading, connectionStatus, isStale, openSettings, toggleWidget, widgetOpen, tabbable, historyExpanded, onToggleHistoryExpanded, children, className, ...props }, ref) => {
-    const { settings } = useSettingsContext();
     const { trend, mg_dl, mmol_l } = formatReading(reading);
 
     return (
@@ -30,7 +28,7 @@ export const Display = forwardRef<HTMLDivElement, DisplayProps>(
         <div className="flex flex-col w-full flex-1 min-h-0">
           <div className="w-full flex flex-row gap-4 shrink-0">
             <Button
-              className="bg-dex-bg hover:bg-dex-fg-light"
+              className="bg-app-surface hover:bg-app-background-light"
               Icon={() => {
                 return <Settings className="size-[17.5px] mr-1.5" strokeWidth={2.1} />;
               }}
@@ -39,7 +37,7 @@ export const Display = forwardRef<HTMLDivElement, DisplayProps>(
               text="Settings"></Button>
 
             <Button
-              className="ml-auto bg-dex-bg hover:bg-dex-fg-light"
+              className="ml-auto bg-app-surface hover:bg-app-background-light"
               Icon={() => {
                 if (widgetOpen) {
                   return <Shrink className="size-4 mr-1.5" strokeWidth={2.1} />;
@@ -50,8 +48,8 @@ export const Display = forwardRef<HTMLDivElement, DisplayProps>(
               click={toggleWidget}
               text={widgetOpen ? "Close Widget" : "Open Widget"}></Button>
           </div>
-          <div className="relative w-full flex-1 min-h-0 mb-1">
-            {settings.sensor === "G7" ? <DexcomG7 trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)}></DexcomG7> : <DexcomG6 trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)}></DexcomG6>}
+          <div className="relative w-full flex-1 min-h-0 mb-4">
+            <GlucoseIndicator trend={trend} mg_dl={String(mg_dl)} mmol_l={String(mmol_l)} />
           </div>
           <History open={true} expanded={historyExpanded} onToggleExpanded={onToggleHistoryExpanded} connectionStatus={connectionStatus} isStale={isStale} className=""></History>
         </div>

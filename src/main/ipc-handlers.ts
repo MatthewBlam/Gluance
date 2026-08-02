@@ -5,19 +5,20 @@ import type { Storage } from "./storage";
 import type { TrayManager } from "./tray";
 import { createLogger } from "./logger";
 import { setLaunchAtLogin } from "./launch-agent";
+import { applyNativeTheme } from "./theme";
 
 const authLog = createLogger("auth");
 const settingsLog = createLogger("settings");
 const dataLog = createLogger("data");
 
-function isValidSettings(s: unknown): s is Settings {
+export function isValidSettings(s: unknown): s is Settings {
   if (typeof s !== "object" || s === null) return false;
   const o = s as Record<string, unknown>;
   return (
+    typeof o.theme === "string" &&
+    (o.theme === "system" || o.theme === "light" || o.theme === "dark") &&
     typeof o.unit === "string" &&
     (o.unit === "mg/dl" || o.unit === "mmol/l") &&
-    typeof o.sensor === "string" &&
-    (o.sensor === "G6" || o.sensor === "G7") &&
     typeof o.high === "number" &&
     o.high >= 100 && o.high <= 400 &&
     typeof o.low === "number" &&
@@ -102,6 +103,7 @@ export function registerIpcHandlers(ctx: AppContext): void {
     try {
       const prev = ctx.storage.getSettings();
       ctx.storage.saveSettings(settings);
+      applyNativeTheme(settings.theme);
       ctx.pushToWidget(PushChannels.SETTINGS, settings);
       ctx.trayManager.update(ctx.storage.getCurrentReading(), settings.unit);
       if (settings.launchAtLogin !== prev.launchAtLogin) {

@@ -2,6 +2,7 @@ import { Tray, Menu, nativeImage } from "electron";
 import path from "path";
 import { Reading } from "../shared/types";
 import { PushChannels } from "../shared/ipc-channels";
+import { APP_NAME } from "../shared/branding";
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
 
@@ -45,7 +46,7 @@ export class TrayManager {
       },
     ]);
 
-    this.tray.setToolTip("Dexcom");
+    this.tray.setToolTip(APP_NAME);
     this.tray.setContextMenu(this.menu);
 
     this.menu.getMenuItemById("open-widget")!.visible = false;

@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from dexcom_server.main import main
+from gluance_server.main import main
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--secret", default=None)

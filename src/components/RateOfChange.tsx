@@ -16,10 +16,10 @@ export function RateOfChange() {
 
     const colorClass =
         roc.severity === "rapid"
-            ? "text-dex-red"
+            ? "text-reading-low"
             : roc.severity === "moderate"
-              ? "text-dex-yellow"
-              : "text-dex-green";
+              ? "text-reading-high"
+              : "text-brand";
 
     const unitLabel = settings.unit === "mg/dl" ? "mg/dL" : "mmol/L";
 
