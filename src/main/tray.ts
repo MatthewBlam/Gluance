@@ -1,10 +1,7 @@
 import { Tray, Menu, nativeImage } from "electron";
-import path from "path";
 import { Reading } from "../shared/types";
 import { PushChannels } from "../shared/ipc-channels";
 import { APP_NAME } from "../shared/branding";
-
-declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
 
 type PushFn = (channel: string, ...args: any[]) => void;
 
@@ -18,12 +15,8 @@ export class TrayManager {
   }
 
   init(): void {
-    const iconPath = MAIN_WINDOW_VITE_DEV_SERVER_URL
-      ? "src/graphics/app-logo-trayTemplate.png"
-      : path.join(__dirname, "../assets/graphics/app-logo-trayTemplate.png");
-    const icon = nativeImage.createFromPath(iconPath).resize({ width: 13 });
-    icon.setTemplateImage(true);
-    this.tray = new Tray(icon);
+    // Text-only tray: the title carries the glucose value and trend arrow.
+    this.tray = new Tray(nativeImage.createEmpty());
 
     this.menu = Menu.buildFromTemplate([
       {
@@ -76,7 +69,7 @@ export class TrayManager {
     if (!this.tray) return;
     const glucose = unit === "mmol/l" ? reading.mmol_l : reading.value;
     this.tray.setTitle(
-      ` ${glucose === -1 ? "" : ` ${glucose}`} ${reading.trend_arrow}`
+      `${glucose === -1 ? "" : `${glucose} `}${reading.trend_arrow}`
     );
   }
 }

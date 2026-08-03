@@ -3,7 +3,6 @@ import { defineConfig } from "vite";
 import { pluginExposeRenderer } from "./vite.base.config";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import copy from "rollup-plugin-copy";
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -19,17 +18,6 @@ export default defineConfig((env) => {
             outDir: path.resolve(__dirname, ".vite", "renderer", name),
             rollupOptions: {
                 input: path.resolve(__dirname, "src", "renderer", "index.html"),
-                plugins: [
-                    copy({
-                        targets: [
-                            {
-                                src: "src/graphics/app-logo-trayTemplate*.png",
-                                dest: ".vite/assets/graphics",
-                            },
-                        ],
-                        hook: "writeBundle",
-                    }),
-                ],
             },
         },
         plugins: [pluginExposeRenderer(name), tailwindcss()],
