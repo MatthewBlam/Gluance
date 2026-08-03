@@ -2,6 +2,7 @@ import { vi } from "vitest";
 
 export const _mockState = {
   encryptionAvailable: true,
+  appleInterfaceStyle: undefined as string | undefined,
 };
 
 export const app = {
@@ -35,6 +36,11 @@ export const ipcMain = {
 export const nativeTheme = {
   themeSource: "system" as "system" | "light" | "dark",
   shouldUseDarkColors: false,
+  on: vi.fn(),
+};
+
+export const systemPreferences = {
+  getUserDefault: vi.fn(() => _mockState.appleInterfaceStyle),
 };
 
 export const BrowserWindow = vi.fn();
@@ -44,5 +50,6 @@ export default {
   safeStorage,
   ipcMain,
   nativeTheme,
+  systemPreferences,
   BrowserWindow,
 };

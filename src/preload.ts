@@ -1,6 +1,6 @@
 import { ipcRenderer, contextBridge } from "electron";
 import { IpcChannels, PushChannels } from "./shared/ipc-channels";
-import type { Reading, Settings, Credentials, ConnectionStatus } from "./shared/types";
+import type { Reading, Settings, Credentials, ConnectionStatus, ResolvedThemeMode } from "./shared/types";
 import type { GluanceApi } from "./shared/preload.d";
 
 function onPush<T extends unknown[]>(channel: string, callback: (...args: T) => void): () => void {
@@ -36,6 +36,7 @@ const api: GluanceApi = {
     saveHistoryTimeRange: (minutes: number) => ipcRenderer.invoke(IpcChannels.HISTORY_SAVE_TIME_RANGE, minutes),
     getHistoryGraphHeight: () => ipcRenderer.invoke(IpcChannels.HISTORY_GET_GRAPH_HEIGHT),
     saveHistoryGraphHeight: (height: number) => ipcRenderer.invoke(IpcChannels.HISTORY_SAVE_GRAPH_HEIGHT, height),
+    getSystemTheme: () => ipcRenderer.invoke(IpcChannels.THEME_GET_SYSTEM),
 
     // Push listeners (return unsubscribe)
     onReading: (cb: (reading: Reading) => void) => onPush(PushChannels.READING, cb),
@@ -50,6 +51,7 @@ const api: GluanceApi = {
     onSettings: (cb: (settings: Settings) => void) => onPush(PushChannels.SETTINGS, cb),
     onConnectionStatus: (cb: (status: ConnectionStatus) => void) => onPush(PushChannels.CONNECTION_STATUS, cb),
     onHistoryBackfill: (cb: (readings: Reading[]) => void) => onPush(PushChannels.HISTORY_BACKFILL, cb),
+    onSystemThemeChanged: (cb: (theme: ResolvedThemeMode) => void) => onPush(PushChannels.SYSTEM_THEME, cb),
 };
 
 contextBridge.exposeInMainWorld("api", api);

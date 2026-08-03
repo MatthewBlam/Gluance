@@ -1,10 +1,33 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useApplyTheme } from "../hooks/useApplyTheme";
-import { DEFAULT_SETTINGS, type ThemeMode } from "../shared/types";
+import {
+  DEFAULT_SETTINGS,
+  type ResolvedThemeMode,
+  type ThemeMode,
+} from "../shared/types";
 import { isValidSettings } from "../main/ipc-handlers";
-import { applyNativeTheme } from "../main/theme";
+import { applyNativeTheme, getSystemTheme } from "../main/theme";
 import { nativeTheme } from "electron";
+import { _mockState } from "./mocks/electron";
+
+/**
+ * Stub the preload bridge. `osTheme` is what the main process reports as the
+ * real OS appearance; returns a trigger for the system-theme push channel.
+ */
+function stubApi(osTheme: ResolvedThemeMode) {
+  let pushListener: ((theme: ResolvedThemeMode) => void) | undefined;
+  vi.stubGlobal("api", {
+    getSystemTheme: vi.fn().mockResolvedValue(osTheme),
+    onSystemThemeChanged: vi.fn((cb: (theme: ResolvedThemeMode) => void) => {
+      pushListener = cb;
+      return () => {
+        pushListener = undefined;
+      };
+    }),
+  });
+  return (theme: ResolvedThemeMode) => pushListener?.(theme);
+}
 
 describe("useApplyTheme", () => {
   afterEach(() => {
@@ -24,54 +47,61 @@ describe("useApplyTheme", () => {
     expect(document.documentElement.dataset.theme).toBe("dark");
   });
 
-  it("follows system theme changes while the preference is system", () => {
-    let changeListener:
-      | ((event: MediaQueryListEvent) => void)
-      | undefined;
-    const systemDarkMode = {
-      matches: true,
-      addEventListener: vi.fn(
-        (_type: string, listener: (event: MediaQueryListEvent) => void) => {
-          changeListener = listener;
-        },
-      ),
-      removeEventListener: vi.fn(),
-    } as unknown as MediaQueryList;
-    vi.stubGlobal("matchMedia", vi.fn(() => systemDarkMode));
+  it("follows system theme changes while the preference is system", async () => {
+    const pushSystemTheme = stubApi("dark");
 
     const { result } = renderHook(() => useApplyTheme("system"));
 
-    expect(result.current).toBe("dark");
+    await waitFor(() => expect(result.current).toBe("dark"));
     expect(document.documentElement.dataset.theme).toBe("dark");
 
     act(() => {
-      changeListener?.({ matches: false } as MediaQueryListEvent);
+      pushSystemTheme("light");
     });
 
     expect(result.current).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
   });
 
-  it("keeps a manual preference when the system theme changes", () => {
-    let changeListener:
-      | ((event: MediaQueryListEvent) => void)
-      | undefined;
-    const systemDarkMode = {
-      matches: false,
-      addEventListener: vi.fn(
-        (_type: string, listener: (event: MediaQueryListEvent) => void) => {
-          changeListener = listener;
-        },
-      ),
-      removeEventListener: vi.fn(),
-    } as unknown as MediaQueryList;
-    vi.stubGlobal("matchMedia", vi.fn(() => systemDarkMode));
+  it("keeps a manual preference when the system theme changes", async () => {
+    const pushSystemTheme = stubApi("light");
 
     renderHook(() => useApplyTheme("dark"));
     act(() => {
-      changeListener?.({ matches: false } as MediaQueryListEvent);
+      pushSystemTheme("light");
     });
 
+    expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  // Regression: nativeTheme.themeSource overrides prefers-color-scheme in the
+  // renderer, so while a manual theme is forced matchMedia reports that forced
+  // theme instead of the OS appearance. Resetting settings to the "system"
+  // default must resolve against the real OS appearance from the main process.
+  it("resolves system against the OS appearance, not the forced theme", async () => {
+    // Forced light: the media query lies and says the system is light.
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => ({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      })),
+    );
+    // Main knows the OS is actually dark.
+    stubApi("dark");
+
+    const { result, rerender } = renderHook(
+      ({ theme }: { theme: ThemeMode }) => useApplyTheme(theme),
+      { initialProps: { theme: "light" } as { theme: ThemeMode } },
+    );
+
+    expect(result.current).toBe("light");
+
+    // Reset to defaults puts the draft back to "system".
+    rerender({ theme: "system" });
+
+    await waitFor(() => expect(result.current).toBe("dark"));
     expect(document.documentElement.dataset.theme).toBe("dark");
   });
 });
@@ -94,6 +124,28 @@ describe("theme settings validation", () => {
     expect(
       isValidSettings({ ...DEFAULT_SETTINGS, theme: "contrast" }),
     ).toBe(false);
+  });
+});
+
+describe("getSystemTheme", () => {
+  afterEach(() => {
+    _mockState.appleInterfaceStyle = undefined;
+  });
+
+  it("reports the OS appearance even while a theme is forced", () => {
+    _mockState.appleInterfaceStyle = "Dark";
+
+    for (const forced of ["system", "light", "dark"] as const) {
+      applyNativeTheme(forced);
+      expect(getSystemTheme()).toBe("dark");
+    }
+  });
+
+  it("reports light when the OS has no dark appearance set", () => {
+    _mockState.appleInterfaceStyle = undefined;
+    applyNativeTheme("dark");
+
+    expect(getSystemTheme()).toBe("light");
   });
 });
 

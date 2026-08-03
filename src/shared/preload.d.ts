@@ -1,4 +1,4 @@
-import type { ConnectionStatus, Credentials, Reading, Settings } from "./types";
+import type { ConnectionStatus, Credentials, Reading, ResolvedThemeMode, Settings } from "./types";
 
 export interface GluanceApi {
     // Settings
@@ -39,6 +39,9 @@ export interface GluanceApi {
     resetTray(): Promise<void>;
     setTrayWidgetState(open: boolean): Promise<void>;
 
+    // Theme — the OS appearance, which the renderer can't read while a theme is forced
+    getSystemTheme(): Promise<ResolvedThemeMode>;
+
     // Push event listeners (return unsubscribe function)
     onReading(callback: (reading: Reading) => void): () => void;
     onAuthSuccess(callback: () => void): () => void;
@@ -52,6 +55,7 @@ export interface GluanceApi {
     onSettings(callback: (settings: Settings) => void): () => void;
     onConnectionStatus(callback: (status: ConnectionStatus) => void): () => void;
     onHistoryBackfill(callback: (readings: Reading[]) => void): () => void;
+    onSystemThemeChanged(callback: (theme: ResolvedThemeMode) => void): () => void;
 }
 
 declare global {

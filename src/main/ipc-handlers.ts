@@ -5,7 +5,7 @@ import type { Storage } from "./storage";
 import type { TrayManager } from "./tray";
 import { createLogger } from "./logger";
 import { setLaunchAtLogin } from "./launch-agent";
-import { applyNativeTheme } from "./theme";
+import { applyNativeTheme, getSystemTheme } from "./theme";
 
 const authLog = createLogger("auth");
 const settingsLog = createLogger("settings");
@@ -113,6 +113,8 @@ export function registerIpcHandlers(ctx: AppContext): void {
       settingsLog.error("Failed to save settings:", err);
     }
   });
+
+  ipcMain.handle(IpcChannels.THEME_GET_SYSTEM, () => getSystemTheme());
 
   ipcMain.handle(IpcChannels.WIDGET_OPEN, (_e, focus: string | null) => {
     ctx.trayManager.showCloseWidgetMenu();

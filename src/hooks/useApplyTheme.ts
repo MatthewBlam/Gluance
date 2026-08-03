@@ -3,6 +3,12 @@ import type { ResolvedThemeMode, ThemeMode } from "../shared/types";
 
 const SYSTEM_DARK_MODE_QUERY = "(prefers-color-scheme: dark)";
 
+/**
+ * Best-effort seed for the first paint. Only trustworthy while no theme is
+ * forced — `nativeTheme.themeSource` overrides `prefers-color-scheme` in the
+ * renderer, so once the user picks light or dark this reports that choice back
+ * rather than the OS appearance. The main process supplies the real value.
+ */
 function getSystemTheme(): ResolvedThemeMode {
   if (
     typeof window === "undefined" ||
@@ -18,17 +24,19 @@ export function useApplyTheme(theme: ThemeMode): ResolvedThemeMode {
     useState<ResolvedThemeMode>(getSystemTheme);
 
   useEffect(() => {
-    if (typeof window.matchMedia !== "function") return;
+    let cancelled = false;
 
-    const systemDarkMode = window.matchMedia(SYSTEM_DARK_MODE_QUERY);
-    const handleChange = (event: MediaQueryListEvent) => {
-      setSystemTheme(event.matches ? "dark" : "light");
-    };
+    window.api
+      ?.getSystemTheme?.()
+      .then((osTheme) => {
+        if (!cancelled) setSystemTheme(osTheme);
+      })
+      .catch(() => {});
 
-    setSystemTheme(systemDarkMode.matches ? "dark" : "light");
-    systemDarkMode.addEventListener("change", handleChange);
+    const unsubscribe = window.api?.onSystemThemeChanged?.(setSystemTheme);
     return () => {
-      systemDarkMode.removeEventListener("change", handleChange);
+      cancelled = true;
+      unsubscribe?.();
     };
   }, []);
 

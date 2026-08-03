@@ -1,4 +1,4 @@
-import { app, BrowserWindow, powerMonitor } from "electron";
+import { app, BrowserWindow, nativeTheme, powerMonitor } from "electron";
 import { Reading, Credentials } from "./shared/types";
 import { PushChannels } from "./shared/ipc-channels";
 import { PythonBackend } from "./main/python-backend";
@@ -9,7 +9,7 @@ import { buildAppMenu } from "./main/menu";
 import { registerIpcHandlers } from "./main/ipc-handlers";
 import { initLogger, createLogger } from "./main/logger";
 import { wasLaunchedAtLogin } from "./main/launch-agent";
-import { applyNativeTheme } from "./main/theme";
+import { applyNativeTheme, getSystemTheme } from "./main/theme";
 import {
   APP_NAME,
   APP_VERSION,
@@ -217,6 +217,12 @@ async function handleResume() {
       dataLog.error("Failed to fetch resume backfill:", err);
     });
 }
+
+// The renderer can't read the OS appearance itself while a theme is forced.
+nativeTheme.on("updated", () => {
+  pushToRenderer(PushChannels.SYSTEM_THEME, getSystemTheme());
+  pushToWidget(PushChannels.SYSTEM_THEME, getSystemTheme());
+});
 
 powerMonitor.on("suspend", () => Python?.pause());
 powerMonitor.on("resume", () => handleResume());

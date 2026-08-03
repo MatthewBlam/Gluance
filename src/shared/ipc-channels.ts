@@ -1,4 +1,10 @@
-import type { ConnectionStatus, Credentials, Reading, Settings } from "./types";
+import type {
+    ConnectionStatus,
+    Credentials,
+    Reading,
+    ResolvedThemeMode,
+    Settings,
+} from "./types";
 
 // Request-response channels (ipcRenderer.invoke ↔ ipcMain.handle)
 export const IpcChannels = {
@@ -39,6 +45,9 @@ export const IpcChannels = {
     // Tray
     TRAY_RESET: "tray:reset",
     TRAY_SET_WIDGET_STATE: "tray:set-widget-state",
+
+    // Theme
+    THEME_GET_SYSTEM: "theme:get-system",
 } as const;
 
 // Push channels (main → renderer via webContents.send)
@@ -55,6 +64,7 @@ export const PushChannels = {
     SETTINGS: "push:settings",
     CONNECTION_STATUS: "push:connection-status",
     HISTORY_BACKFILL: "push:history-backfill",
+    SYSTEM_THEME: "push:system-theme",
 } as const;
 
 // Type maps for invoke channels
@@ -83,6 +93,7 @@ export interface InvokeMap {
     [IpcChannels.HISTORY_SAVE_TIME_RANGE]: { args: number; result: void };
     [IpcChannels.HISTORY_GET_GRAPH_HEIGHT]: { args: void; result: number };
     [IpcChannels.HISTORY_SAVE_GRAPH_HEIGHT]: { args: number; result: void };
+    [IpcChannels.THEME_GET_SYSTEM]: { args: void; result: ResolvedThemeMode };
 }
 
 // Type maps for push channels
@@ -99,4 +110,5 @@ export interface PushMap {
     [PushChannels.SETTINGS]: Settings;
     [PushChannels.CONNECTION_STATUS]: ConnectionStatus;
     [PushChannels.HISTORY_BACKFILL]: Reading[];
+    [PushChannels.SYSTEM_THEME]: ResolvedThemeMode;
 }
