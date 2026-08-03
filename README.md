@@ -18,7 +18,7 @@
   </p>
 </div>
 
-[Demo](https://www.gluance.com)
+<video src="gluance_demo.mp4" width="100%" autoplay loop muted playsinline></video>
 
 Gluance is an independent, unofficial application and is not affiliated with or endorsed by Dexcom, Inc.
 
@@ -125,15 +125,15 @@ This builds `gluance-backend`, packages `Gluance.app`, and creates the platform 
 
 ## Scripts
 
-| Command                | Description                    |
-| ---------------------- | ------------------------------ |
-| `npm start`            | Start development mode         |
-| `npm test`             | Run Vitest tests               |
-| `npm run test:watch`   | Run Vitest in watch mode       |
-| `npm run lint`         | Run ESLint                     |
-| `npm run build:python` | Compile `gluance-backend`      |
-| `npm run package`      | Build and package the app      |
-| `npm run make`         | Build distributable artifacts  |
+| Command                | Description                   |
+| ---------------------- | ----------------------------- |
+| `npm start`            | Start development mode        |
+| `npm test`             | Run Vitest tests              |
+| `npm run test:watch`   | Run Vitest in watch mode      |
+| `npm run lint`         | Run ESLint                    |
+| `npm run build:python` | Compile `gluance-backend`     |
+| `npm run package`      | Build and package the app     |
+| `npm run make`         | Build distributable artifacts |
 
 ## Tech stack
 
